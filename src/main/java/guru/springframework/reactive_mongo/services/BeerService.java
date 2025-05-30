@@ -6,6 +6,8 @@ import reactor.core.publisher.Mono;
 
 public interface BeerService {
 
+    Mono<BeerDTO> findFirstByBeerName(String beerName);
+
     Flux<BeerDTO> listBeers();
 
     Mono<BeerDTO> saveBeer (BeerDTO beerDTO);
@@ -17,4 +19,6 @@ public interface BeerService {
     Mono<BeerDTO> patchBeer(String beerId, BeerDTO beerDTO);
 
     Mono<Void> deleteBeerById(String beerId);
+
+    Flux<BeerDTO> findByBeerStyle(String beerStyle);
 }
