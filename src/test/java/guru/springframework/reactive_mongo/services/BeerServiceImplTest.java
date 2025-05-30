@@ -6,6 +6,7 @@ import guru.springframework.reactive_mongo.model.BeerDTO;
 import guru.springframework.reactive_mongo.repositories.BeerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +40,33 @@ class BeerServiceImplTest {
     }
 
     @Test
+    void testFindBeerByBeerStyle() {
+
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        beerService.findByBeerStyle("IPA").subscribe(dto-> {
+            System.out.println(dto.toString());
+            atomicBoolean.set(true);
+        });
+
+        await().untilTrue(atomicBoolean);
+    }
+
+    @Test
+    void testFindFirstByBeerName() {
+        BeerDTO beerDTO1 = beerService.saveBeer(getTestBeerDto()).block();
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        Mono<BeerDTO> foundDto = beerService.findFirstByBeerName(beerDTO1.getBeerName());
+
+        foundDto.subscribe(dto -> {
+            System.out.println(dto.toString());
+            atomicBoolean.set(true);
+        });
+        await().untilTrue(atomicBoolean);
+    }
+
+    @Test
     @DisplayName("Test Save Beer Using Subscriber")
     void saveBeerUseSubscriber() {
 
@@ -56,6 +84,7 @@ class BeerServiceImplTest {
         await().untilTrue(atomicBoolean);
 
         BeerDTO persistedDto = atomicDto.get();
+        System.out.println(persistedDto);
         assertThat(persistedDto).isNotNull();
         assertThat(persistedDto.getId()).isNotNull();
     }
@@ -64,6 +93,8 @@ class BeerServiceImplTest {
     @DisplayName("Test Save Beer Using Block")
     void testSaveBeerUseBlock() {
         BeerDTO savedDto = beerService.saveBeer(getTestBeerDto()).block();
+
+        System.out.println(savedDto);
         assertThat(savedDto).isNotNull();
         assertThat(savedDto.getId()).isNotNull();
     }
@@ -96,9 +127,7 @@ class BeerServiceImplTest {
                 })
                 .flatMap(beerService::saveBeer) // save updated beer
                 .flatMap(savedUpdatedDto -> beerService.getBeerById(savedUpdatedDto.getId())) // get from db
-                .subscribe(dtoFromDb -> {
-                    atomicDto.set(dtoFromDb);
-                });
+                .subscribe(atomicDto::set);
 
         await().until(() -> atomicDto.get() != null);
         assertThat(atomicDto.get().getBeerName()).isEqualTo(newName);
@@ -106,11 +135,15 @@ class BeerServiceImplTest {
 
     @Test
     void testDeleteBeer() {
-        BeerDTO beerToDelete = getTestBeerDto();
+        BeerDTO savedBeer = beerService.saveBeer(beerDTO).block();
+        BeerDTO persistedBeer = beerService.getBeerById(savedBeer.getId()).block();
 
-        beerService.deleteBeerById(beerToDelete.getId()).block();
+        System.out.println(savedBeer);
+        System.out.println(persistedBeer);
 
-        Mono<BeerDTO> expectedEmptyBeerMono = beerService.getBeerById(beerToDelete.getId());
+        beerService.deleteBeerById(savedBeer.getId()).block();
+
+        Mono<BeerDTO> expectedEmptyBeerMono = beerService.getBeerById(savedBeer.getId());
 
         BeerDTO emptyBeer = expectedEmptyBeerMono.block();
 
