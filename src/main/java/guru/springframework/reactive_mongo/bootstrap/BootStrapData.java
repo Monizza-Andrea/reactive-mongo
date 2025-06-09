@@ -63,38 +63,47 @@ public class BootStrapData implements CommandLineRunner {
                         .lastModifiedDate(LocalDateTime.now())
                         .build();
 
-                beerRepository.saveAll(Arrays.asList(beer1, beer2, beer3)).subscribe();
+                beerRepository.save(beer1).subscribe(beer ->
+                        System.out.println(beer.toString()));
+
+                beerRepository.save(beer2).subscribe(beer ->
+                        System.out.println(beer.toString()));
+
+                beerRepository.save(beer3).subscribe(beer ->
+                        System.out.println(beer.toString()));
+
+                System.out.println("Loaded beers: " + beerRepository.count().block());
             }
         });
 
     }
 
 
-    private void loadCustomerData() {
-        customerRepository.count().subscribe(count -> {
-            if (count == 0) {
-                Customer customer1 = Customer.builder()
-                        .customerName("Andrea Monizza")
-                        .createdDate(LocalDateTime.now())
-                        .lastModifiedDate(LocalDateTime.now())
-                        .build();
-
-                Customer customer2 = Customer.builder()
-                        .customerName("Fede Ricco")
-                        .createdDate(LocalDateTime.now())
-                        .lastModifiedDate(LocalDateTime.now())
-                        .build();
-
-                Customer customer3 = Customer.builder()
-                        .customerName("John Thompson")
-                        .createdDate(LocalDateTime.now())
-                        .lastModifiedDate(LocalDateTime.now())
-                        .build();
-
-                customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3)).subscribe();
-            }
-        });
-    }
+//    private void loadCustomerData() {
+//        customerRepository.count().subscribe(count -> {
+//            if (count == 0) {
+//                Customer customer1 = Customer.builder()
+//                        .customerName("Andrea Monizza")
+//                        .createdDate(LocalDateTime.now())
+//                        .lastModifiedDate(LocalDateTime.now())
+//                        .build();
+//
+//                Customer customer2 = Customer.builder()
+//                        .customerName("Fede Ricco")
+//                        .createdDate(LocalDateTime.now())
+//                        .lastModifiedDate(LocalDateTime.now())
+//                        .build();
+//
+//                Customer customer3 = Customer.builder()
+//                        .customerName("John Thompson")
+//                        .createdDate(LocalDateTime.now())
+//                        .lastModifiedDate(LocalDateTime.now())
+//                        .build();
+//
+//                customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3)).subscribe();
+//            }
+//        });
+//    }
 
 
 }
