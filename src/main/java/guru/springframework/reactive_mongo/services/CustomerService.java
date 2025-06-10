@@ -6,15 +6,17 @@ import reactor.core.publisher.Mono;
 
 public interface CustomerService {
 
-    Mono<Void> deleteCustomer(String customerId);
-
-    Mono<CustomerDTO> patchCustomer(String customerId, CustomerDTO customerDTO);
-
-    Mono<CustomerDTO> updateCustomer(String customerId, CustomerDTO customerDTO);
-
-    Mono<CustomerDTO> saveNewCustomer(CustomerDTO customerDTO);
+    Flux<CustomerDTO> listCustomers();
 
     Mono<CustomerDTO> getCustomerById(String customerId);
 
-    Flux<CustomerDTO> listCustomers();
+    Mono<CustomerDTO> saveNewCustomer(CustomerDTO customerDTO);
+
+    Mono<CustomerDTO> updateCustomer(String customerId, CustomerDTO customerDTO);
+
+    Mono<CustomerDTO> patchCustomer(String customerId, CustomerDTO customerDTO);
+
+    Mono<Void> deleteCustomer(String customerId);
+
+    Flux<CustomerDTO> listCustomersByEmail(String email);
 }

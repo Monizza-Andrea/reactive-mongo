@@ -25,7 +25,10 @@ public class BootStrapData implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         beerRepository.deleteAll()
-                        .doOnSuccess(foo -> loadBeerData())
+                        .doOnSuccess(foo -> {
+                            loadBeerData();
+                            loadCustomerData();
+                        })
                                 .subscribe();
 
     }
@@ -79,31 +82,43 @@ public class BootStrapData implements CommandLineRunner {
     }
 
 
-//    private void loadCustomerData() {
-//        customerRepository.count().subscribe(count -> {
-//            if (count == 0) {
-//                Customer customer1 = Customer.builder()
-//                        .customerName("Andrea Monizza")
-//                        .createdDate(LocalDateTime.now())
-//                        .lastModifiedDate(LocalDateTime.now())
-//                        .build();
-//
-//                Customer customer2 = Customer.builder()
-//                        .customerName("Fede Ricco")
-//                        .createdDate(LocalDateTime.now())
-//                        .lastModifiedDate(LocalDateTime.now())
-//                        .build();
-//
-//                Customer customer3 = Customer.builder()
-//                        .customerName("John Thompson")
-//                        .createdDate(LocalDateTime.now())
-//                        .lastModifiedDate(LocalDateTime.now())
-//                        .build();
-//
-//                customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3)).subscribe();
-//            }
-//        });
-//    }
+    private void loadCustomerData() {
+        customerRepository.count().subscribe(count -> {
+            if (count == 0) {
+                Customer customer1 = Customer.builder()
+                        .customerName("Andrea Monizza")
+                        .email("andrea@gmail.com")
+                        .createdDate(LocalDateTime.now())
+                        .lastModifiedDate(LocalDateTime.now())
+                        .build();
+
+                Customer customer2 = Customer.builder()
+                        .customerName("Fede Ricco")
+                        .email("federico@gmail.com")
+                        .createdDate(LocalDateTime.now())
+                        .lastModifiedDate(LocalDateTime.now())
+                        .build();
+
+                Customer customer3 = Customer.builder()
+                        .customerName("John Thompson")
+                        .email("thompson@gmail.com")
+                        .createdDate(LocalDateTime.now())
+                        .lastModifiedDate(LocalDateTime.now())
+                        .build();
+
+                customerRepository.save(customer1)
+                        .subscribe(customer -> System.out.println(customer.toString()));
+
+                customerRepository.save(customer2)
+                        .subscribe(customer -> System.out.println(customer.toString()));
+
+                customerRepository.save(customer3)
+                        .subscribe(customer -> System.out.println(customer.toString()));
+
+                System.out.println("Loaded customers: " + customerRepository.count().block());
+            }
+        });
+    }
 
 
 }

@@ -64,5 +64,11 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll()
                 .map(customerMapper::customerToCustomerDto);
     }
+
+    @Override
+    public Flux<CustomerDTO> listCustomersByEmail (String email) {
+        return customerRepository.findByEmail(email)
+                .map(customerMapper::customerToCustomerDto);
+    }
 }
 
