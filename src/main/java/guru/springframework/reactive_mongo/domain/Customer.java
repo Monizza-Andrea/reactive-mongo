@@ -1,5 +1,6 @@
 package guru.springframework.reactive_mongo.domain;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,10 @@ public class Customer {
 
     @Id
     private String id;
+
+    @NotBlank
+    @Size(min = 5, max = 255)
+    private String email;
 
     @Size(max = 255)
     private String customerName;
