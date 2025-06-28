@@ -215,7 +215,9 @@ class BeerEndpointTest {
     }
 
     public BeerDTO getSavedTestBeer(){
-        FluxExchangeResult<BeerDTO> beerDTOFluxExchangeResult = webTestClient.post().uri(BeerRouterConfig.BEER_PATH)
+        FluxExchangeResult<BeerDTO> beerDTOFluxExchangeResult = webTestClient
+                .mutateWith(mockOAuth2Login())
+                .post().uri(BeerRouterConfig.BEER_PATH)
                 .body(Mono.just(BeerServiceImplTest.getTestBeer()), BeerDTO.class)
                 .header("Content-Type", "application/json")
                 .exchange()
